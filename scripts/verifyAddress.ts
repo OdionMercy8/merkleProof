@@ -15,7 +15,7 @@ async function main() {
     console.log("Root Hash: ", rootHash);
 
 
-    const claimingAddress = leafNodes[0];
+    const claimingAddress = leafNodes[1];
 
     const hexProof = merkleTree.getHexProof(keccak256(claimingAddress));
     console.log(hexProof);

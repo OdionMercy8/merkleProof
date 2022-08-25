@@ -28,7 +28,8 @@ contract MerkleTrees is ERC721URIStorage {
         returns (uint256)
     {
         bool prove = verified(proof);
-        require(prove != true, "not listed");
+        require(!prove, "not proved");
+        require(whitelisted[msg.sender] != true);
         uint256 newItemId = _tokenIds.current();
         require(newItemId <= totalSupply, "exceeds total supply");
         _safeMint(msg.sender, newItemId);
