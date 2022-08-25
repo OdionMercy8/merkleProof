@@ -4,28 +4,35 @@ import MerkleTree from 'merkletreejs';
 import keccak256 from 'keccak256';
 
 async function main() {
+    const signers = await ethers.getSigners();
+  
+    const leafNodes = signers.map(signer => keccak256(signer.address));
+    const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
+  
+    const rootHash = merkleTree.getHexRoot();
+  
+    console.log( merkleTree.toString());
+    console.log("Root Hash: ", rootHash);
+
+
+    const claimingAddress = leafNodes[0];
+
+    const hexProof = merkleTree.getHexProof(keccak256(claimingAddress));
+    console.log(hexProof);
+
     console.log("deploying....");
     
     const Merkleprove = await ethers.getContractFactory("MerkleTrees");
     const merkleprove = await Merkleprove.deploy();
 
     await merkleprove.deployed();
+    
+    await merkleprove.checkAdress("https://url.com", hexProof);
 
-  const signers = await ethers.getSigners();
+    const tokenID = await merkleprove.tokenURI(0);
+
+    console.log(tokenID);
   
-const leafNodes = signers.map(signer => keccak256(signer.address));
-const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
-  
-const rootHash = merkleTree.getHexRoot();
-  
-console.log( merkleTree.toString());
-console.log("Root Hash: ", rootHash);
-
-
-const claimingAddress = leafNodes[0];
-
-const hexProof = merkleTree.getHexProof(keccak256(claimingAddress));
-console.log(hexProof);
      
 }
 
